@@ -2,6 +2,7 @@ package site.bias.icon;
 
 import lombok.*;
 import site.bias.downloader.Downloader;
+import site.bias.parser.HtmlParser;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class Icon {
      */
     @Deprecated
     public static List<Icon> getIconsByUrl(String url) {
-        List<String> urls = HtmlIconParser.getIconUrls(url);
+        List<String> urls = HtmlParser.getIconUrls(url);
         List<byte[]> datas = urls.stream()
                 .map(Downloader::download)
                 .filter(Objects::nonNull)
