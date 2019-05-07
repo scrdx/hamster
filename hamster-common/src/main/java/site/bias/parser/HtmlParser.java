@@ -26,7 +26,7 @@ public class HtmlParser {
     private static final String PATH_PREFIX = "http";
 
     public static List<String> getIconUrls(String url) {
-        return getIconUrls(getDocumentByUrl(url));
+        return getIconUrls(getDocumentByUrl(url), url);
     }
 
     public static WebApplication getWebAppByUrl(String url) {
@@ -48,14 +48,14 @@ public class HtmlParser {
      * @param doc Document对象
      * @return ICON地址，如果网页没有指定shortcut icon元素/连接URL超时/解析过程发生异常，则返回null
      */
-    private static List<String> getIconUrls(Document doc) {
+    private static List<String> getIconUrls(Document doc, String url) {
         List<String> iconUrls;
         Elements elements = doc.head().getElementsByAttributeValueMatching("rel", ".*icon.*");
         List<String> hrefs = elements.eachAttr("href");
         //将相对路径转化为绝对路径
         iconUrls = hrefs.stream().map(s -> {
             if (!s.startsWith(PATH_PREFIX)) {
-                return getAbsolutePath(s);
+                return getAbsolutePath(url, s);
             }
             return s;
         }).collect(Collectors.toList());
@@ -74,14 +74,19 @@ public class HtmlParser {
     }
 
     @SneakyThrows
-    private static String getAbsolutePath(String url) {
-        URI base = new URI(url);
+    private static String getAbsolutePath(String url, String path) {
+//        URI base = new URI(url);
+//
+//        URIBuilder builder = new URIBuilder();
+//        builder.setScheme(base.getScheme())
+//                .setHost(base.getHost())
+//                .setPath(path);
+//        return builder.build().toString();
+        return "";
+    }
 
-        URIBuilder builder = new URIBuilder();
-        builder.setScheme(base.getScheme())
-                .setHost(base.getHost())
-                .setPath(url);
-        return builder.build().toString();
+    public static void main(String[] args) {
+        getIconUrls("https://huaban.com/");
     }
 
 
