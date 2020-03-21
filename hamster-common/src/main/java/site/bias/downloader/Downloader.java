@@ -1,7 +1,6 @@
 package site.bias.downloader;
 
 
-import com.sun.istack.internal.NotNull;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apache.http.HttpHeaders;
@@ -16,7 +15,7 @@ import java.io.*;
 public class Downloader {
 
 
-    public static byte[] download(@NotNull String urlStr) {
+    public static byte[] download(String urlStr) {
 
         HttpClient client = HttpClients.createDefault();
         try {

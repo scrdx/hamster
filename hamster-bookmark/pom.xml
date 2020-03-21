@@ -52,6 +52,18 @@
 			<version>0.4.11</version>
 		</dependency>
 
+		<!-- Swagger-ui -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
 		<!-- Hamster-Common -->
 		<dependency>
 			<groupId>site.bias</groupId>
