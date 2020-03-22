@@ -3,14 +3,12 @@ package site.bias.hamster.bookmark.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import net.coobird.thumbnailator.Thumbnails;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import site.bias.hamster.bookmark.bean.Response;
 import site.bias.hamster.bookmark.bean.param.BookmarkParam;
 import site.bias.hamster.bookmark.bean.vo.BookmarkVO;
-import site.bias.hamster.bookmark.bean.vo.TagVO;
 import site.bias.hamster.bookmark.config.HamsterConfig;
 import site.bias.hamster.bookmark.constant.BookmarkStatus;
 import site.bias.hamster.bookmark.constant.ErrorCodeEnum;
@@ -23,12 +21,12 @@ import site.bias.hamster.bookmark.pojo.BookmarkRecordExample;
 import site.bias.hamster.bookmark.pojo.TagRecord;
 import site.bias.hamster.bookmark.pojo.TagRecordExample;
 import site.bias.hamster.bookmark.service.BookmarkService;
-import site.bias.hamster.util.Base64Util;
+import site.bias.hamster.bookmark.util.TokenUtils;
+import site.bias.hamster.util.Base64Utils;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author chenbinbin
@@ -49,8 +47,6 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Resource
     private HamsterConfig config;
 
-    private String userCode = "test";
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Response add(BookmarkParam bookmark) throws Exception {
@@ -61,18 +57,18 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmarkRecord.setCategoryId(bookmark.getCategoryId());
         bookmarkRecord.setCreated(new Date());
         bookmarkRecord.setStatus(BookmarkStatus.NORMAL);
-        bookmarkRecord.setUserCode(userCode);
+        bookmarkRecord.setUserCode(TokenUtils.getCurrentUserCode());
         //标签处理
         String tags = bookmark.getTags();
         if (!StringUtils.isEmpty(tags)) {
-            bookmarkRecord.setTags(tagDAO.getTagIds(bookmark.getTags(), userCode));
+            bookmarkRecord.setTags(tagDAO.getTagIds(bookmark.getTags(), TokenUtils.getCurrentUserCode()));
         }
         //书签图标处理
         String pic = bookmark.getPic();
         BookmarkParam.CropParam cropParam = bookmark.getCropParam();
         if (!StringUtils.isEmpty(pic)) {
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-            Thumbnails.of(new ByteArrayInputStream(Base64Util.toBytes(pic)))
+            Thumbnails.of(new ByteArrayInputStream(Base64Utils.toBytes(pic)))
                     .outputQuality(1.0d)
                     .sourceRegion(cropParam.getX(), cropParam.getY(), cropParam.getWidth(), cropParam.getHeight())
                     .size(cropParam.getWidth(), cropParam.getHeight())
@@ -105,7 +101,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         //标签处理
         String tags = bookmark.getTags();
         if (!StringUtils.isEmpty(tags)) {
-            bookmarkRecord.setTags(tagDAO.getTagIds(bookmark.getTags(), userCode));
+            bookmarkRecord.setTags(tagDAO.getTagIds(bookmark.getTags(), TokenUtils.getCurrentUserCode()));
         } else {
             //如果为空字符串,则意味着删除原来的标签
             bookmarkRecord.setTags("");
@@ -115,7 +111,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         BookmarkParam.CropParam cropParam = bookmark.getCropParam();
         if (!StringUtils.isEmpty(pic)) {
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-            Thumbnails.of(new ByteArrayInputStream(Base64Util.toBytes(pic)))
+            Thumbnails.of(new ByteArrayInputStream(Base64Utils.toBytes(pic)))
                     .outputQuality(1.0d)
                     .sourceRegion(cropParam.getX(), cropParam.getY(), cropParam.getWidth(), cropParam.getHeight())
                     .size(cropParam.getWidth(), cropParam.getHeight())
@@ -142,7 +138,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             TagRecordExample tagExample = new TagRecordExample();
             TagRecordExample.Criteria tagCriteria = tagExample.createCriteria();
             tagCriteria.andNameLike("%" + key + "%");
-            tagCriteria.andUserCodeEqualTo(userCode);
+            tagCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
             List<TagRecord> tagRecords = tagMapper.selectByExample(tagExample);
             StringBuilder tagCondition = new StringBuilder("%");
             for (TagRecord tagRecord : tagRecords) {
@@ -151,13 +147,13 @@ public class BookmarkServiceImpl implements BookmarkService {
             if (tagRecords.size() > 0) {
                 BookmarkRecordExample.Criteria orCriteria = bookmarkExample.or();
                 orCriteria.andTagsLike(tagCondition.toString());
-                orCriteria.andUserCodeEqualTo(userCode);
+                orCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
                 if (null != categoryId) {
                     orCriteria.andCategoryIdEqualTo(categoryId);
                 }
             }
         }
-        bookmarkCriteria.andUserCodeEqualTo(userCode);
+        bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
 
         Page<BookmarkRecord> pageObject = PageHelper.startPage(page, pageSize);
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
@@ -166,7 +162,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
             String tags = bookmarkRecord.getTags();
             if (!StringUtils.isEmpty(tags)) {
-                bookmark.setTagInfoList(tagDAO.getTagInfos(tags, userCode));
+                bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
             }
             data.add(bookmark);
         }
@@ -180,7 +176,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
         String tags = bookmarkRecord.getTags();
         if (!StringUtils.isEmpty(tags)) {
-            bookmark.setTagInfoList(tagDAO.getTagInfos(tags, userCode));
+            bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
         }
         return Response.build(ErrorCodeEnum.SUCCESS, bookmark);
     }
@@ -189,7 +185,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Response queryByTagId(Integer tagId) throws Exception {
         BookmarkRecordExample bookmarkExample = new BookmarkRecordExample();
         BookmarkRecordExample.Criteria bookmarkCriteria = bookmarkExample.createCriteria();
-        bookmarkCriteria.andUserCodeEqualTo(userCode);
+        bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
         bookmarkCriteria.andTagsLike("%" + tagId + "%");
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
         List<BookmarkVO> data = new ArrayList<>();
@@ -197,7 +193,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
             String tags = bookmarkRecord.getTags();
             if (!StringUtils.isEmpty(tags)) {
-                bookmark.setTagInfoList(tagDAO.getTagInfos(tags, userCode));
+                bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
             }
             data.add(bookmark);
         }

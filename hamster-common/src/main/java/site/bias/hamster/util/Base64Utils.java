@@ -10,7 +10,7 @@ import java.util.Base64;
  * @date 2020/2/28 20:40
  */
 @Slf4j
-public class Base64Util {
+public class Base64Utils {
 
     public static String toBase64(byte[] src) {
         return new String(Base64.getEncoder().encode(src));

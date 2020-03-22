@@ -7,6 +7,7 @@ import site.bias.hamster.bookmark.bean.param.UserParam;
 import site.bias.hamster.bookmark.service.UserService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 用户注册登录相关接口
@@ -42,8 +43,8 @@ public class UserController {
      * @throws Exception 全局异常处理
      */
     @PostMapping("login")
-    public Response login(@RequestBody UserParam userParam) throws Exception {
-        return userService.login(userParam);
+    public Response login(@RequestBody UserParam userParam, HttpServletResponse response) throws Exception {
+        return userService.login(userParam, response);
     }
 
     /**
@@ -54,7 +55,7 @@ public class UserController {
      * @throws Exception 全局异常处理
      */
     @PostMapping("logout")
-    public Response logout(@RequestBody UserParam userParam) throws Exception {
-        return userService.logout(userParam);
+    public Response logout(@RequestBody UserParam userParam, HttpServletResponse response) throws Exception {
+        return userService.logout(userParam, response);
     }
 }

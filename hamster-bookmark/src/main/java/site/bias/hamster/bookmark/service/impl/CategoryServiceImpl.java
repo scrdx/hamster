@@ -13,9 +13,9 @@ import site.bias.hamster.bookmark.pojo.BookmarkRecordExample;
 import site.bias.hamster.bookmark.pojo.CategoryRecord;
 import site.bias.hamster.bookmark.pojo.CategoryRecordExample;
 import site.bias.hamster.bookmark.service.CategoryService;
+import site.bias.hamster.bookmark.util.TokenUtils;
 
 import javax.annotation.Resource;
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,8 +33,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Resource
     private BookmarkRecordMapper bookmarkMapper;
 
-    private static final String USER_CODE = "test";
-
     @Override
     public Response add(String title, Integer parentId) throws Exception {
         CategoryRecord categoryRecord = new CategoryRecord();
@@ -43,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
         //获取父分类的parents信息
         CategoryRecord parentRecord = categoryMapper.selectByPrimaryKey(parentId);
         if (null == parentRecord) {
-            log.warn("category/add:不存在的分类ID:{} userCode:{}", parentId, USER_CODE);
+            log.warn("category/add:不存在的分类ID:{} userCode:{}", parentId, TokenUtils.getCurrentUserCode());
             return Response.build(ErrorCodeEnum.BAD_PARAM);
         }
         String parents = parentRecord.getParents();
@@ -53,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
             parents = parents + parentId;
         }
         categoryRecord.setParents(parents);
-        categoryRecord.setUserCode(USER_CODE);
+        categoryRecord.setUserCode(TokenUtils.getCurrentUserCode());
         categoryRecord.setCreated(new Date());
         categoryMapper.insertSelective(categoryRecord);
         return Response.build(ErrorCodeEnum.SUCCESS, categoryRecord.getId());
@@ -83,7 +81,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Response query() throws Exception {
         CategoryRecordExample example = new CategoryRecordExample();
         CategoryRecordExample.Criteria criteria = example.createCriteria();
-        criteria.andUserCodeEqualTo(USER_CODE);
+        criteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
         List<CategoryRecord> categoryRecords = categoryMapper.selectByExample(example);
         List<CategoryVO> data = new ArrayList<>();
         for (CategoryRecord record : categoryRecords) {

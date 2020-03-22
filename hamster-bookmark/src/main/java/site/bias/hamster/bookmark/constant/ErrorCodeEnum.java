@@ -16,7 +16,7 @@ public enum ErrorCodeEnum {
     /**
      * 鉴权失败
      */
-    FAIL(100, "鉴权失败"),
+    AUTHENTICATION_ERR(100, "鉴权失败"),
 
     /**
      * 请求参数异常

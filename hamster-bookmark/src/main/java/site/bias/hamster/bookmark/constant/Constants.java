@@ -9,4 +9,6 @@ public class Constants {
     public static final String SPLIT_CHARACTER = ",";
 
     public static final String IMAGE_FORMAT = "jpeg";
+
+    public static final String TOKEN_KEY = "token";
 }
