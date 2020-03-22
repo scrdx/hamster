@@ -113,7 +113,7 @@
       #{created,jdbcType=TIMESTAMP}, #{modified,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="site.bias.hamster.bookmark.pojo.CategoryRecord">
+  <insert id="insertSelective" parameterType="site.bias.hamster.bookmark.pojo.CategoryRecord" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into tbl_bm_category
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

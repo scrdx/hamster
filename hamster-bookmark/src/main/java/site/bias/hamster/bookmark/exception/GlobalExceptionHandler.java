@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Response exception(HttpServletRequest request, HttpServletResponse response, Exception exception) {
         log.error("发生未知异常", exception);
-        return Response.build(ErrorCodeEnum.FAIL);
+        return Response.build(ErrorCodeEnum.SERVER_ERR);
     }
 
 }

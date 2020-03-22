@@ -11,11 +11,11 @@ public interface CategoryService {
     /**
      * 添加分类
      *
-     * @param title 分类名称
+     * @param title    分类名称
      * @param parentId 父分类ID
      * @return response
      */
-    Response add(String title, Integer parentId);
+    Response add(String title, Integer parentId) throws Exception;
 
     /**
      * 删除分类
@@ -23,12 +23,12 @@ public interface CategoryService {
      * @param id 分类ID
      * @return response
      */
-    Response delete(Integer id);
+    Response delete(Integer id) throws Exception;
 
     /**
      * 查询分类
      *
      * @return response
      */
-    Response query();
+    Response query() throws Exception;
 }
