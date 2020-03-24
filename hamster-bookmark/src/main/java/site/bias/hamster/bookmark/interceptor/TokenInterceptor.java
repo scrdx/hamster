@@ -26,9 +26,10 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getServletPath();
-        if (path.contains("hamster/user")) {
+        if (path.contains("hamster/user") || path.contains("swagger")) {
             return true;
         }
+        response.setContentType("application/json;charset=utf-8");
         Cookie[] cookies = request.getCookies();
         if (null == cookies || cookies.length < 1) {
             Response rep = Response.build(ErrorCodeEnum.AUTHENTICATION_ERR);
