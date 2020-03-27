@@ -38,11 +38,11 @@ public interface BookmarkService {
      *
      * @param key 标题或者标签
      * @param categoryId 分类ID
-     * @param page 页码
+     * @param pageNum 页码
      * @param pageSize 每页条数
      * @return response
      */
-    Response query(String key, Integer categoryId, Integer page, Integer pageSize) throws Exception;
+    Response query(String key, Integer categoryId, Integer pageNum, Integer pageSize) throws Exception;
 
     /**
      * 根据ID查询

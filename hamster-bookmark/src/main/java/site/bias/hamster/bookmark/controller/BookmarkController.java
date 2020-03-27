@@ -38,10 +38,10 @@ public class BookmarkController {
     @GetMapping("query")
     public Response query(@RequestParam(value = "key", required = false) String key,
                           @RequestParam(value = "categoryId", required = false) Integer categoryId,
-                          @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                          @RequestParam(value = "pageSize", required = false, defaultValue="50") Integer pageSize) throws Exception{
+                          @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                          @RequestParam(value = "pageSize", required = false) Integer pageSize) throws Exception{
 
-        return bookmarkService.query(key, categoryId, page, pageSize);
+        return bookmarkService.query(key, categoryId, pageNum, pageSize);
     }
 
     @GetMapping("queryById")

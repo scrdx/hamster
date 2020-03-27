@@ -20,7 +20,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("add")
-    public Response add(@RequestParam String title, Integer parentId) throws Exception {
+    public Response add(@RequestParam String title, @RequestParam Integer parentId) throws Exception {
         return categoryService.add(title, parentId);
     }
 

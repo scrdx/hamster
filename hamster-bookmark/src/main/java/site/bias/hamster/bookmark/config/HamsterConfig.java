@@ -12,9 +12,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Setter
 public class HamsterConfig {
-    private String path;
+    private String uploadPath;
 
-    public String getPath(){
-        return path.endsWith("/")||path.endsWith("\\") ? path :path + "/";
+    private String imgPrefix;
+
+    public String getUploadPath(){
+        return uploadPath.endsWith("/")||uploadPath.endsWith("\\") ? uploadPath :uploadPath + "/";
+    }
+
+    public String getImgPrefix() {
+        return imgPrefix;
     }
 }

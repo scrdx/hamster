@@ -6,7 +6,7 @@ import net.coobird.thumbnailator.Thumbnails;
  * @author chenbinbin
  * @date 2020/2/28 21:35
  */
-public class AvatorUtil {
+public class AvatarUtil {
 
     public void crop() {
 

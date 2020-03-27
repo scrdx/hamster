@@ -67,13 +67,14 @@ public class BookmarkServiceImpl implements BookmarkService {
         String pic = bookmark.getPic();
         BookmarkParam.CropParam cropParam = bookmark.getCropParam();
         if (!StringUtils.isEmpty(pic)) {
+            pic = pic.substring(pic.indexOf(",") + 1);
             String fileName = UUID.randomUUID().toString().replaceAll("-", "");
             Thumbnails.of(new ByteArrayInputStream(Base64Utils.toBytes(pic)))
                     .outputQuality(1.0d)
                     .sourceRegion(cropParam.getX(), cropParam.getY(), cropParam.getWidth(), cropParam.getHeight())
                     .size(cropParam.getWidth(), cropParam.getHeight())
                     .outputFormat(Constants.IMAGE_FORMAT)
-                    .toFile(config.getPath() + fileName + "." + Constants.IMAGE_FORMAT);
+                    .toFile(config.getUploadPath() + fileName + "." + Constants.IMAGE_FORMAT);
             bookmarkRecord.setIconUrl(fileName + "." + Constants.IMAGE_FORMAT);
         }
 
@@ -116,7 +117,7 @@ public class BookmarkServiceImpl implements BookmarkService {
                     .sourceRegion(cropParam.getX(), cropParam.getY(), cropParam.getWidth(), cropParam.getHeight())
                     .size(cropParam.getWidth(), cropParam.getHeight())
                     .outputFormat(Constants.IMAGE_FORMAT)
-                    .toFile(config.getPath() + fileName);
+                    .toFile(config.getUploadPath() + fileName);
             bookmarkRecord.setIconUrl(fileName + "." + Constants.IMAGE_FORMAT);
         }
         bookmarkMapper.updateByPrimaryKeySelective(bookmarkRecord);
@@ -124,7 +125,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public Response query(String key, Integer categoryId, Integer page, Integer pageSize) throws Exception {
+    public Response query(String key, Integer categoryId, Integer pageNum, Integer pageSize) throws Exception {
         BookmarkRecordExample bookmarkExample = new BookmarkRecordExample();
         BookmarkRecordExample.Criteria bookmarkCriteria = bookmarkExample.createCriteria();
         if (!StringUtils.isEmpty(key)) {
@@ -155,19 +156,27 @@ public class BookmarkServiceImpl implements BookmarkService {
         }
         bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
 
-        Page<BookmarkRecord> pageObject = PageHelper.startPage(page, pageSize);
+        Page<BookmarkRecord> pageObject = null;
+        if (null != pageSize) {
+            pageObject = PageHelper.startPage(pageNum, pageSize);
+        }
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
         List<BookmarkVO> data = new ArrayList<>();
         for (BookmarkRecord bookmarkRecord : bookmarkRecords) {
             BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
+            bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
             String tags = bookmarkRecord.getTags();
             if (!StringUtils.isEmpty(tags)) {
                 bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
             }
             data.add(bookmark);
         }
-        return Response.build(ErrorCodeEnum.SUCCESS, data,
-                pageObject.getPageNum(), pageObject.getPageSize(), pageObject.getPages(), pageObject.getTotal());
+
+        if (null != pageSize) {
+            return Response.build(ErrorCodeEnum.SUCCESS, data,
+                    pageNum, pageObject.getPageSize(), pageObject.getPages(), pageObject.getTotal());
+        }
+        return Response.build(ErrorCodeEnum.SUCCESS, data);
     }
 
     @Override
@@ -178,6 +187,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (!StringUtils.isEmpty(tags)) {
             bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
         }
+        bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
         return Response.build(ErrorCodeEnum.SUCCESS, bookmark);
     }
 
@@ -195,6 +205,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             if (!StringUtils.isEmpty(tags)) {
                 bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
             }
+            bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
             data.add(bookmark);
         }
         return Response.build(ErrorCodeEnum.SUCCESS, data);

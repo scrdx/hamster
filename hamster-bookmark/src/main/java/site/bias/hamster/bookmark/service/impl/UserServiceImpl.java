@@ -72,6 +72,10 @@ public class UserServiceImpl implements UserService {
         String token = TokenUtils.generateToken(user.getUserCode(), user.getNickname());
         Cookie cookie = new Cookie(Constants.TOKEN_KEY, token);
         cookie.setMaxAge(MAX_AGE);
+        cookie.setSecure(false);
+        //TODO 调试使用
+        cookie.setDomain("127.0.0.1");
+        cookie.setPath("/");
         servletResponse.addCookie(cookie);
         return Response.build(ErrorCodeEnum.SUCCESS, token);
     }

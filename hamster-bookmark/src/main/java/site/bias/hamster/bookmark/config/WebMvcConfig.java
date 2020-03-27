@@ -6,8 +6,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
@@ -21,6 +21,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Resource
     private HandlerInterceptor tokenInterceptor;
+
+    @Resource
+    private HamsterConfig config;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -47,5 +50,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
         configSource.registerCorsConfiguration("/**", config);
         return new CorsFilter(configSource);
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("file:" + config.getUploadPath());
     }
 }
