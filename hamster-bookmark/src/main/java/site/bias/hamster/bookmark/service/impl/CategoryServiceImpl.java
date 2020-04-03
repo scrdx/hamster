@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import site.bias.hamster.bookmark.bean.Response;
 import site.bias.hamster.bookmark.bean.vo.CategoryVO;
+import site.bias.hamster.bookmark.constant.Constants;
 import site.bias.hamster.bookmark.constant.ErrorCodeEnum;
 import site.bias.hamster.bookmark.mapper.BookmarkRecordMapper;
 import site.bias.hamster.bookmark.mapper.CategoryRecordMapper;
@@ -46,9 +47,9 @@ public class CategoryServiceImpl implements CategoryService {
         }
         String parents = parentRecord.getParents();
         if (StringUtils.isEmpty(parents)) {
-            parents = parentRecord.getId() + "/";
+            parents = parentRecord.getId() + Constants.CATEGORY_SPLIT_CHARACTER;
         } else {
-            parents = parents + parentId;
+            parents = parents + parentId + Constants.CATEGORY_SPLIT_CHARACTER;
         }
         categoryRecord.setParents(parents);
         categoryRecord.setUserCode(TokenUtils.getCurrentUserCode());
