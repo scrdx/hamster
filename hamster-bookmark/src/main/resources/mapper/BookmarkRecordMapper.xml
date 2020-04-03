@@ -8,6 +8,7 @@
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
     <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="parents" jdbcType="VARCHAR" property="parents" />
     <result column="user_code" jdbcType="VARCHAR" property="userCode" />
     <result column="tags" jdbcType="VARCHAR" property="tags" />
     <result column="created" jdbcType="TIMESTAMP" property="created" />
@@ -73,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, url, description, icon_url, category_id, user_code, tags, created, modified, 
-    `status`
+    id, title, url, description, icon_url, category_id, parents, user_code, tags, created, 
+    modified, `status`
   </sql>
   <select id="selectByExample" parameterType="site.bias.hamster.bookmark.pojo.BookmarkRecordExample" resultMap="BaseResultMap">
     select
@@ -109,12 +110,14 @@
   <insert id="insert" parameterType="site.bias.hamster.bookmark.pojo.BookmarkRecord">
     insert into tbl_bm_bookmark (id, title, url, 
       description, icon_url, category_id, 
-      user_code, tags, created, 
-      modified, `status`)
+      parents, user_code, tags, 
+      created, modified, `status`
+      )
     values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
       #{description,jdbcType=VARCHAR}, #{iconUrl,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, 
-      #{userCode,jdbcType=VARCHAR}, #{tags,jdbcType=VARCHAR}, #{created,jdbcType=TIMESTAMP}, 
-      #{modified,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER})
+      #{parents,jdbcType=VARCHAR}, #{userCode,jdbcType=VARCHAR}, #{tags,jdbcType=VARCHAR}, 
+      #{created,jdbcType=TIMESTAMP}, #{modified,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="site.bias.hamster.bookmark.pojo.BookmarkRecord">
     insert into tbl_bm_bookmark
@@ -136,6 +139,9 @@
       </if>
       <if test="categoryId != null">
         category_id,
+      </if>
+      <if test="parents != null">
+        parents,
       </if>
       <if test="userCode != null">
         user_code,
@@ -171,6 +177,9 @@
       </if>
       <if test="categoryId != null">
         #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="parents != null">
+        #{parents,jdbcType=VARCHAR},
       </if>
       <if test="userCode != null">
         #{userCode,jdbcType=VARCHAR},
@@ -216,6 +225,9 @@
       <if test="record.categoryId != null">
         category_id = #{record.categoryId,jdbcType=INTEGER},
       </if>
+      <if test="record.parents != null">
+        parents = #{record.parents,jdbcType=VARCHAR},
+      </if>
       <if test="record.userCode != null">
         user_code = #{record.userCode,jdbcType=VARCHAR},
       </if>
@@ -244,6 +256,7 @@
       description = #{record.description,jdbcType=VARCHAR},
       icon_url = #{record.iconUrl,jdbcType=VARCHAR},
       category_id = #{record.categoryId,jdbcType=INTEGER},
+      parents = #{record.parents,jdbcType=VARCHAR},
       user_code = #{record.userCode,jdbcType=VARCHAR},
       tags = #{record.tags,jdbcType=VARCHAR},
       created = #{record.created,jdbcType=TIMESTAMP},
@@ -271,6 +284,9 @@
       <if test="categoryId != null">
         category_id = #{categoryId,jdbcType=INTEGER},
       </if>
+      <if test="parents != null">
+        parents = #{parents,jdbcType=VARCHAR},
+      </if>
       <if test="userCode != null">
         user_code = #{userCode,jdbcType=VARCHAR},
       </if>
@@ -296,6 +312,7 @@
       description = #{description,jdbcType=VARCHAR},
       icon_url = #{iconUrl,jdbcType=VARCHAR},
       category_id = #{categoryId,jdbcType=INTEGER},
+      parents = #{parents,jdbcType=VARCHAR},
       user_code = #{userCode,jdbcType=VARCHAR},
       tags = #{tags,jdbcType=VARCHAR},
       created = #{created,jdbcType=TIMESTAMP},

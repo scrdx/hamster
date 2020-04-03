@@ -15,6 +15,8 @@ public class BookmarkRecord {
 
     private Integer categoryId;
 
+    private String parents;
+
     private String userCode;
 
     private String tags;
@@ -71,6 +73,14 @@ public class BookmarkRecord {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getParents() {
+        return parents;
+    }
+
+    public void setParents(String parents) {
+        this.parents = parents;
     }
 
     public String getUserCode() {

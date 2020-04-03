@@ -15,11 +15,9 @@ import site.bias.hamster.bookmark.constant.ErrorCodeEnum;
 import site.bias.hamster.bookmark.constant.Constants;
 import site.bias.hamster.bookmark.dao.TagDAO;
 import site.bias.hamster.bookmark.mapper.BookmarkRecordMapper;
+import site.bias.hamster.bookmark.mapper.CategoryRecordMapper;
 import site.bias.hamster.bookmark.mapper.TagRecordMapper;
-import site.bias.hamster.bookmark.pojo.BookmarkRecord;
-import site.bias.hamster.bookmark.pojo.BookmarkRecordExample;
-import site.bias.hamster.bookmark.pojo.TagRecord;
-import site.bias.hamster.bookmark.pojo.TagRecordExample;
+import site.bias.hamster.bookmark.pojo.*;
 import site.bias.hamster.bookmark.service.BookmarkService;
 import site.bias.hamster.bookmark.util.TokenUtils;
 import site.bias.hamster.util.Base64Utils;
@@ -27,6 +25,7 @@ import site.bias.hamster.util.Base64Utils;
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author chenbinbin
@@ -42,6 +41,9 @@ public class BookmarkServiceImpl implements BookmarkService {
     private TagRecordMapper tagMapper;
 
     @Resource
+    private CategoryRecordMapper categoryMapper;
+
+    @Resource
     private TagDAO tagDAO;
 
     @Resource
@@ -54,7 +56,17 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmarkRecord.setTitle(bookmark.getTitle());
         bookmarkRecord.setUrl(bookmark.getUrl());
         bookmarkRecord.setDescription(bookmark.getDescription());
+
+        //获取分类路径
         bookmarkRecord.setCategoryId(bookmark.getCategoryId());
+        CategoryRecord categoryRecord = categoryMapper.selectByPrimaryKey(bookmark.getCategoryId());
+        String parents = categoryRecord.getParents();
+        if (!StringUtils.isEmpty(parents)) {
+            bookmarkRecord.setParents(parents + bookmark.getCategoryId() + Constants.CATEGORY_SPLIT_CHARACTER);
+        } else {
+            bookmarkRecord.setParents(bookmark.getCategoryId() + "/");
+        }
+
         bookmarkRecord.setCreated(new Date());
         bookmarkRecord.setStatus(BookmarkStatus.NORMAL);
         bookmarkRecord.setUserCode(TokenUtils.getCurrentUserCode());
@@ -97,7 +109,17 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmarkRecord.setTitle(bookmark.getTitle());
         bookmarkRecord.setUrl(bookmark.getUrl());
         bookmarkRecord.setDescription(bookmark.getDescription());
+
+        //获取分类路径
         bookmarkRecord.setCategoryId(bookmark.getCategoryId());
+        CategoryRecord categoryRecord = categoryMapper.selectByPrimaryKey(bookmark.getCategoryId());
+        String parents = categoryRecord.getParents();
+        if (!StringUtils.isEmpty(parents)) {
+            bookmarkRecord.setParents(parents + bookmark.getCategoryId() + Constants.CATEGORY_SPLIT_CHARACTER);
+        } else {
+            bookmarkRecord.setParents(bookmark.getCategoryId() + "/");
+        }
+
         bookmarkRecord.setModified(new Date());
         //标签处理
         String tags = bookmark.getTags();
@@ -132,7 +154,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             bookmarkCriteria.andTitleLike("%" + key + "%");
         }
         if (null != categoryId) {
-            bookmarkCriteria.andCategoryIdEqualTo(categoryId);
+            bookmarkCriteria.andParentsLike("%" + categoryId + "%");
         }
         //标签条件
         if (!StringUtils.isEmpty(key)) {

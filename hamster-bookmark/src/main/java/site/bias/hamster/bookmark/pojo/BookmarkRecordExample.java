@@ -505,6 +505,76 @@ public class BookmarkRecordExample {
             return (Criteria) this;
         }
 
+        public Criteria andParentsIsNull() {
+            addCriterion("parents is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsIsNotNull() {
+            addCriterion("parents is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsEqualTo(String value) {
+            addCriterion("parents =", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsNotEqualTo(String value) {
+            addCriterion("parents <>", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsGreaterThan(String value) {
+            addCriterion("parents >", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsGreaterThanOrEqualTo(String value) {
+            addCriterion("parents >=", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsLessThan(String value) {
+            addCriterion("parents <", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsLessThanOrEqualTo(String value) {
+            addCriterion("parents <=", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsLike(String value) {
+            addCriterion("parents like", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsNotLike(String value) {
+            addCriterion("parents not like", value, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsIn(List<String> values) {
+            addCriterion("parents in", values, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsNotIn(List<String> values) {
+            addCriterion("parents not in", values, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsBetween(String value1, String value2) {
+            addCriterion("parents between", value1, value2, "parents");
+            return (Criteria) this;
+        }
+
+        public Criteria andParentsNotBetween(String value1, String value2) {
+            addCriterion("parents not between", value1, value2, "parents");
+            return (Criteria) this;
+        }
+
         public Criteria andUserCodeIsNull() {
             addCriterion("user_code is null");
             return (Criteria) this;
