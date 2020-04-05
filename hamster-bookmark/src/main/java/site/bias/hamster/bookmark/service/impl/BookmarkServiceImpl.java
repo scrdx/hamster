@@ -182,11 +182,21 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (null != pageSize) {
             pageObject = PageHelper.startPage(pageNum, pageSize);
         }
+        //获取书签名称数据
+        CategoryRecordExample categoryExample = new CategoryRecordExample();
+        CategoryRecordExample.Criteria categoryCriteria = categoryExample.createCriteria();
+        categoryCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+        List<CategoryRecord> categoryRecords = categoryMapper.selectByExample(categoryExample);
+        Map<Integer, String> categoryNameMap = new HashMap<>(categoryRecords.size());
+        categoryRecords.forEach(c -> {
+            categoryNameMap.put(c.getId(), c.getTitle());
+        });
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
         List<BookmarkVO> data = new ArrayList<>();
         for (BookmarkRecord bookmarkRecord : bookmarkRecords) {
             BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
             bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
+            bookmark.setCategoryName(categoryNameMap.get(bookmarkRecord.getCategoryId()));
             String tags = bookmarkRecord.getTags();
             if (!StringUtils.isEmpty(tags)) {
                 bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));

@@ -24,6 +24,8 @@ public class BookmarkVO {
 
     private Integer categoryId;
 
+    private String categoryName;
+
     private String userCode;
 
     private Date created;
