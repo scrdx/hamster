@@ -1,23 +1,34 @@
 package site.bias.hamster.bookmark.service.impl;
 
+import com.alibaba.druid.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
 import site.bias.hamster.bookmark.bean.Response;
+import site.bias.hamster.bookmark.bean.param.CropParam;
 import site.bias.hamster.bookmark.bean.param.UserParam;
+import site.bias.hamster.bookmark.bean.vo.UserInfoVO;
+import site.bias.hamster.bookmark.config.HamsterConfig;
 import site.bias.hamster.bookmark.constant.Constants;
 import site.bias.hamster.bookmark.constant.ErrorCodeEnum;
 import site.bias.hamster.bookmark.mapper.UserRecordMapper;
 import site.bias.hamster.bookmark.pojo.UserRecord;
 import site.bias.hamster.bookmark.pojo.UserRecordExample;
 import site.bias.hamster.bookmark.service.UserService;
+import site.bias.hamster.bookmark.util.AvatarUtil;
 import site.bias.hamster.bookmark.util.EncryptUtil;
 import site.bias.hamster.bookmark.util.TokenUtils;
+import site.bias.hamster.util.Base64Utils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author chenbinbin
@@ -28,6 +39,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserRecordMapper userRecordMapper;
+
+    @Resource
+    private HamsterConfig config;
 
     /**
      * Cookie的超时时间为30天
@@ -86,5 +100,37 @@ public class UserServiceImpl implements UserService {
         cookie.setMaxAge(0);
         servletResponse.addCookie(cookie);
         return Response.build(ErrorCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public Response config(UserParam userParam) throws Exception {
+        UserRecord user = userRecordMapper.selectByPrimaryKey(TokenUtils.getCurrentUserCode());
+        user.setModified(new Date());
+        String picData = userParam.getAvatarPic();
+        CropParam cropParam = userParam.getCropParam();
+        String oldAvatar = user.getAvatarUrl();
+        if (!StringUtils.isEmpty(picData)) {
+            user.setAvatarUrl(AvatarUtil.crop(picData, config.getUploadPath(), cropParam));
+            if (!StringUtils.isEmpty(oldAvatar)) {
+                Files.deleteIfExists(Paths.get(config.getUploadPath() + oldAvatar));
+            }
+        }
+        user.setNickname(userParam.getNickname());
+        userRecordMapper.updateByPrimaryKeySelective(user);
+        UserInfoVO userInfo = new UserInfoVO(user);
+        userInfo.setAvatarUrl(config.getImgPrefix() + user.getAvatarUrl());
+        return Response.build(ErrorCodeEnum.SUCCESS, userInfo);
+    }
+
+    @Override
+    public Response getUserInfo() throws Exception {
+        String userCode = TokenUtils.getCurrentUserCode();
+        if (StringUtils.isEmpty(userCode)) {
+            return Response.build(ErrorCodeEnum.AUTHENTICATION_ERR);
+        }
+        UserRecord userRecord = userRecordMapper.selectByPrimaryKey(userCode);
+        UserInfoVO user = new UserInfoVO(userRecord);
+        user.setAvatarUrl(config.getImgPrefix() + user.getAvatarUrl());
+        return Response.build(ErrorCodeEnum.SUCCESS, user);
     }
 }

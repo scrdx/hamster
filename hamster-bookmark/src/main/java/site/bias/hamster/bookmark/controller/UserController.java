@@ -58,4 +58,27 @@ public class UserController {
     public Response logout(@RequestBody UserParam userParam, HttpServletResponse response) throws Exception {
         return userService.logout(userParam, response);
     }
+
+    /**
+     * 设置用户信息
+     *
+     * @param userParam 用户信息参数
+     * @return response
+     * @throws Exception 全局异常
+     */
+    @PostMapping("config")
+    public Response config(@RequestBody UserParam userParam) throws Exception {
+        return userService.config(userParam);
+    }
+
+    /**
+     * 查询用户的头像、昵称信息
+     *
+     * @return response
+     * @throws Exception 全局异常
+     */
+    @GetMapping("getUserInfo")
+    public Response getUserInfo() throws Exception {
+        return userService.getUserInfo();
+    }
 }

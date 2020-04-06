@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import site.bias.hamster.bookmark.bean.Response;
 import site.bias.hamster.bookmark.bean.param.BookmarkParam;
+import site.bias.hamster.bookmark.bean.param.CropParam;
 import site.bias.hamster.bookmark.bean.vo.BookmarkVO;
 import site.bias.hamster.bookmark.config.HamsterConfig;
 import site.bias.hamster.bookmark.constant.BookmarkStatus;
@@ -19,11 +20,14 @@ import site.bias.hamster.bookmark.mapper.CategoryRecordMapper;
 import site.bias.hamster.bookmark.mapper.TagRecordMapper;
 import site.bias.hamster.bookmark.pojo.*;
 import site.bias.hamster.bookmark.service.BookmarkService;
+import site.bias.hamster.bookmark.util.AvatarUtil;
 import site.bias.hamster.bookmark.util.TokenUtils;
 import site.bias.hamster.util.Base64Utils;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,17 +81,9 @@ public class BookmarkServiceImpl implements BookmarkService {
         }
         //书签图标处理
         String pic = bookmark.getPic();
-        BookmarkParam.CropParam cropParam = bookmark.getCropParam();
+        CropParam cropParam = bookmark.getCropParam();
         if (!StringUtils.isEmpty(pic)) {
-            pic = pic.substring(pic.indexOf(",") + 1);
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-            Thumbnails.of(new ByteArrayInputStream(Base64Utils.toBytes(pic)))
-                    .outputQuality(1.0d)
-                    .sourceRegion(cropParam.getX(), cropParam.getY(), cropParam.getWidth(), cropParam.getHeight())
-                    .size(cropParam.getWidth(), cropParam.getHeight())
-                    .outputFormat(Constants.IMAGE_FORMAT)
-                    .toFile(config.getUploadPath() + fileName + "." + Constants.IMAGE_FORMAT);
-            bookmarkRecord.setIconUrl(fileName + "." + Constants.IMAGE_FORMAT);
+            bookmarkRecord.setIconUrl(AvatarUtil.crop(pic, config.getUploadPath(), cropParam));
         }
 
         bookmarkMapper.insertSelective(bookmarkRecord);
@@ -131,16 +127,13 @@ public class BookmarkServiceImpl implements BookmarkService {
         }
         //书签图标处理
         String pic = bookmark.getPic();
-        BookmarkParam.CropParam cropParam = bookmark.getCropParam();
+        CropParam cropParam = bookmark.getCropParam();
+        String oldIconFile = bookmarkRecord.getIconUrl();
         if (!StringUtils.isEmpty(pic)) {
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "");
-            Thumbnails.of(new ByteArrayInputStream(Base64Utils.toBytes(pic)))
-                    .outputQuality(1.0d)
-                    .sourceRegion(cropParam.getX(), cropParam.getY(), cropParam.getWidth(), cropParam.getHeight())
-                    .size(cropParam.getWidth(), cropParam.getHeight())
-                    .outputFormat(Constants.IMAGE_FORMAT)
-                    .toFile(config.getUploadPath() + fileName);
-            bookmarkRecord.setIconUrl(fileName + "." + Constants.IMAGE_FORMAT);
+            bookmarkRecord.setIconUrl(AvatarUtil.crop(pic, config.getUploadPath(), cropParam));
+            if (!StringUtils.isEmpty(oldIconFile)) {
+                Files.deleteIfExists(Paths.get(config.getUploadPath() + oldIconFile));
+            }
         }
         bookmarkMapper.updateByPrimaryKeySelective(bookmarkRecord);
         return Response.build(ErrorCodeEnum.SUCCESS);

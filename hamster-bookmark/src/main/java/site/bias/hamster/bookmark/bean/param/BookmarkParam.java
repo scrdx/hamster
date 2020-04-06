@@ -24,27 +24,4 @@ public class BookmarkParam {
     private String pic;
 
     private CropParam cropParam;
-
-    @Data
-    public static class CropParam {
-        /**
-         * px
-         */
-        private Integer x;
-
-        private Integer y;
-
-        private Integer width;
-
-        private Integer height;
-
-        /**
-         *  deg
-         */
-        private Integer rotate;
-
-        private Integer scaleX;
-
-        private Integer scaleY;
-    }
 }

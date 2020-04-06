@@ -14,4 +14,8 @@ public class UserParam {
     private String nickname;
 
     private String password;
+
+    private String avatarPic;
+
+    private CropParam cropParam;
 }

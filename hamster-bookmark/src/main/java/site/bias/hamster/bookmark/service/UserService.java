@@ -25,7 +25,7 @@ public interface UserService {
     /**
      * 登录
      *
-     * @param user 用户信息
+     * @param user     用户信息
      * @param response 用于cookie设置
      * @return response
      * @throws Exception 全局异常处理
@@ -35,10 +35,27 @@ public interface UserService {
     /**
      * 注销用户
      *
-     * @param user 用户信息
+     * @param user     用户信息
      * @param response 用于cookie设置
      * @return response
      * @throws Exception 全局异常处理
      */
     Response logout(UserParam user, HttpServletResponse response) throws Exception;
+
+    /**
+     * 配置用户信息
+     *
+     * @param userParam 用户参数
+     * @return response
+     * @throws Exception 全局异常处理
+     */
+    Response config(UserParam userParam) throws Exception;
+
+    /**
+     * 获取当前用户的信息
+     *
+     * @return response
+     * @throws Exception 全局异常处理
+     */
+    Response getUserInfo() throws Exception;
 }

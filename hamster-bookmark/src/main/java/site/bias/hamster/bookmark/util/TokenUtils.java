@@ -53,6 +53,9 @@ public class TokenUtils {
     }
 
     public static String getUserCode(String token) {
+        if (null == token) {
+            return null;
+        }
         Claim userCode = JWT.decode(token).getClaim("userCode");
         if (null == userCode) {
             return null;
@@ -67,12 +70,16 @@ public class TokenUtils {
 
     /**
      * 获取当前请求的用户编码,调用这个方法意味着token校验已经成功
+     *
      * @return 用户编码
      */
     public static String getCurrentUserCode() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         Cookie[] cookies = request.getCookies();
         String token = null;
+        if (null == cookies) {
+            return null;
+        }
         for (Cookie cookie : cookies) {
             if (Constants.TOKEN_KEY.equals(cookie.getName())) {
                 token = cookie.getValue();
