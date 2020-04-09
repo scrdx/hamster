@@ -149,6 +149,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (null != categoryId) {
             bookmarkCriteria.andParentsLike("%" + categoryId + "%");
         }
+        bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
         //标签条件
         if (!StringUtils.isEmpty(key)) {
             TagRecordExample tagExample = new TagRecordExample();
@@ -156,20 +157,13 @@ public class BookmarkServiceImpl implements BookmarkService {
             tagCriteria.andNameLike("%" + key + "%");
             tagCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
             List<TagRecord> tagRecords = tagMapper.selectByExample(tagExample);
-            StringBuilder tagCondition = new StringBuilder("%");
             for (TagRecord tagRecord : tagRecords) {
-                tagCondition.append(tagRecord.getId()).append("%");
-            }
-            if (tagRecords.size() > 0) {
                 BookmarkRecordExample.Criteria orCriteria = bookmarkExample.or();
-                orCriteria.andTagsLike(tagCondition.toString());
+                orCriteria.andTagsLike("%" + tagRecord.getId() + "%");
                 orCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
-                if (null != categoryId) {
-                    orCriteria.andCategoryIdEqualTo(categoryId);
-                }
+                orCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
             }
         }
-        bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
 
         Page<BookmarkRecord> pageObject = null;
         if (null != pageSize) {
