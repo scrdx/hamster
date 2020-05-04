@@ -43,11 +43,6 @@ public class UserServiceImpl implements UserService {
     @Resource
     private HamsterConfig config;
 
-    /**
-     * Cookie的超时时间为30天
-     */
-    private static final Integer MAX_AGE = 30 * 24 * 3600;
-
     @Override
     public Response add(UserParam user) throws Exception {
         UserRecordExample example = new UserRecordExample();
@@ -85,7 +80,11 @@ public class UserServiceImpl implements UserService {
         //生成TOKEN
         String token = TokenUtils.generateToken(user.getUserCode(), user.getNickname());
         Cookie cookie = new Cookie(Constants.TOKEN_KEY, token);
-        cookie.setMaxAge(MAX_AGE);
+        if (user.isRememberMe()) {
+            cookie.setMaxAge(Constants.TOKEN_EXPIRE);
+        } else {
+            cookie.setMaxAge(-1);
+        }
         cookie.setSecure(false);
         //TODO 调试使用
         cookie.setDomain("127.0.0.1");
@@ -96,8 +95,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response logout(UserParam user, HttpServletResponse servletResponse) throws Exception {
-        Cookie cookie = new Cookie(Constants.TOKEN_KEY, "");
+        Cookie cookie = new Cookie(Constants.TOKEN_KEY, "null");
         cookie.setMaxAge(0);
+        //TODO 调试使用
+        cookie.setDomain("127.0.0.1");
+        cookie.setPath("/");
         servletResponse.addCookie(cookie);
         return Response.build(ErrorCodeEnum.SUCCESS);
     }

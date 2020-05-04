@@ -17,5 +17,7 @@ public class UserParam {
 
     private String avatarPic;
 
+    private boolean rememberMe;
+
     private CropParam cropParam;
 }

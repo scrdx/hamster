@@ -55,7 +55,7 @@ public class UserController {
      * @throws Exception 全局异常处理
      */
     @PostMapping("logout")
-    public Response logout(@RequestBody UserParam userParam, HttpServletResponse response) throws Exception {
+    public Response logout(@RequestBody(required = false) UserParam userParam, HttpServletResponse response) throws Exception {
         return userService.logout(userParam, response);
     }
 

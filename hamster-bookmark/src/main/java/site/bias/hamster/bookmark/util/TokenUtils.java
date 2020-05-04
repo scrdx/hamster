@@ -8,6 +8,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.impl.JWTParser;
 import com.auth0.jwt.interfaces.Claim;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import site.bias.hamster.bookmark.constant.Constants;
@@ -15,6 +16,9 @@ import site.bias.hamster.util.Base64Utils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +34,7 @@ public class TokenUtils {
     private static final Algorithm ALGORITHM = Algorithm.HMAC256(SECRET);
 
     /**
-     * 生成token,暂时不设置失效时间
+     * 生成token
      *
      * @param userCode 用户编码
      * @param nickname 昵称
@@ -40,11 +44,14 @@ public class TokenUtils {
         Map<String, Object> header = new HashMap<>(2);
         header.put("alg", "HS256");
         header.put("typ", "JWT");
+        //失效时间设置为15天
+        long expireTime = LocalDateTime.now().plusSeconds(Constants.TOKEN_EXPIRE).toInstant(ZoneOffset.of("+8")).toEpochMilli();
         return JWT.create()
                 .withHeader(header)
                 .withClaim("userCode", userCode)
                 .withClaim("nickname", nickname)
                 .withClaim("created", new Date())
+                .withExpiresAt(new Date(expireTime))
                 .sign(ALGORITHM);
     }
 
@@ -95,6 +102,9 @@ public class TokenUtils {
         String decoded = decode(token);
         System.out.println(decoded);
         System.out.println(getUserCode(token));
+
+        long time = LocalDateTime.now().plusDays(2).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        System.out.println(new Date(time));
     }
 
 }
