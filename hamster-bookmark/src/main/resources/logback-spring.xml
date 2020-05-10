@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <property name="logPath"  value="/var/log/hamster/" />
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%d][%thread] %highlight(%-5level) [%logger{36} %line]: %msg%n</pattern>
+        </layout>
+    </appender>
+    <appender name="infoFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/info.log</file>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[%d][%thread] %highlight(%-5level) [%logger{36} %line]: %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>15</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+    <appender name="errorFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logPath}/error.log</file>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[%d][%thread] %highlight(%-5level) [%logger{36} %line]: %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+    <root level="info">
+        <appender-ref ref="consoleAppender" />
+        <appender-ref ref="infoFileAppender" />
+        <appender-ref ref="errorFileAppender" />
+    </root>
+</configuration>
