@@ -22,14 +22,11 @@ import site.bias.hamster.bookmark.pojo.*;
 import site.bias.hamster.bookmark.service.BookmarkService;
 import site.bias.hamster.bookmark.util.AvatarUtil;
 import site.bias.hamster.bookmark.util.TokenUtils;
-import site.bias.hamster.util.Base64Utils;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author chenbinbin

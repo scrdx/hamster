@@ -2,7 +2,6 @@ package site.bias.hamster.bookmark.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
 import site.bias.hamster.bookmark.bean.Response;
 import site.bias.hamster.bookmark.bean.param.CropParam;
@@ -18,17 +17,14 @@ import site.bias.hamster.bookmark.service.UserService;
 import site.bias.hamster.bookmark.util.AvatarUtil;
 import site.bias.hamster.bookmark.util.EncryptUtil;
 import site.bias.hamster.bookmark.util.TokenUtils;
-import site.bias.hamster.util.Base64Utils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author chenbinbin
