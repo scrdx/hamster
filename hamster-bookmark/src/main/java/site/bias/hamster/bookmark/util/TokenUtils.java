@@ -81,7 +81,11 @@ public class TokenUtils {
      * @return 用户编码
      */
     public static String getCurrentUserCode() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        ServletRequestAttributes attributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+        if (null == attributes) {
+            return null;
+        }
+        HttpServletRequest request = attributes.getRequest();
         Cookie[] cookies = request.getCookies();
         String token = null;
         if (null == cookies) {
