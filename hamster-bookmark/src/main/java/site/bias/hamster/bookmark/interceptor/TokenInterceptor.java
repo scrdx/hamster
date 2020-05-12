@@ -26,7 +26,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getServletPath();
-        if (path.contains("hamster/user") || path.contains("swagger")) {
+        if (path.contains("hamster/user") || path.contains("swagger") || path.contains("static")) {
             return true;
         }
         response.setContentType("application/json;charset=utf-8");
