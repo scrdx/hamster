@@ -3,6 +3,7 @@ package site.bias.hamster.bookmark.service.impl;
 import com.alibaba.druid.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.bias.hamster.bookmark.bean.Response;
 import site.bias.hamster.bookmark.bean.param.CropParam;
 import site.bias.hamster.bookmark.bean.param.UserParam;
@@ -10,7 +11,9 @@ import site.bias.hamster.bookmark.bean.vo.UserInfoVO;
 import site.bias.hamster.bookmark.config.HamsterConfig;
 import site.bias.hamster.bookmark.constant.Constants;
 import site.bias.hamster.bookmark.constant.ErrorCodeEnum;
+import site.bias.hamster.bookmark.mapper.CategoryRecordMapper;
 import site.bias.hamster.bookmark.mapper.UserRecordMapper;
+import site.bias.hamster.bookmark.pojo.CategoryRecord;
 import site.bias.hamster.bookmark.pojo.UserRecord;
 import site.bias.hamster.bookmark.pojo.UserRecordExample;
 import site.bias.hamster.bookmark.service.UserService;
@@ -37,9 +40,13 @@ public class UserServiceImpl implements UserService {
     private UserRecordMapper userRecordMapper;
 
     @Resource
+    private CategoryRecordMapper categoryMapper;
+
+    @Resource
     private HamsterConfig config;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Response add(UserParam user) throws Exception {
         UserRecordExample example = new UserRecordExample();
         UserRecordExample.Criteria criteria = example.createCriteria();
@@ -54,6 +61,12 @@ public class UserServiceImpl implements UserService {
         userRecord.setPassword(EncryptUtil.md5(user.getPassword()));
         userRecord.setCreated(new Date());
         userRecordMapper.insert(userRecord);
+        //初始化该用户的数据
+        CategoryRecord rootCategory = new CategoryRecord();
+        rootCategory.setTitle("root");
+        rootCategory.setUserCode(user.getUserCode());
+        rootCategory.setCreated(new Date());
+        categoryMapper.insertSelective(rootCategory);
 
         return Response.build(ErrorCodeEnum.SUCCESS, user.getUserCode());
     }
