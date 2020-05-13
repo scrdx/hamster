@@ -81,9 +81,10 @@ public class UserServiceImpl implements UserService {
         } else {
             cookie.setMaxAge(-1);
         }
+        //不使用HTTPS
         cookie.setSecure(false);
-        //TODO 调试使用
-        cookie.setDomain("127.0.0.1");
+        //设置JS脚本不可读
+        cookie.setHttpOnly(true);
         cookie.setPath("/");
         servletResponse.addCookie(cookie);
         return Response.build(ErrorCodeEnum.SUCCESS, token);
@@ -93,8 +94,6 @@ public class UserServiceImpl implements UserService {
     public Response logout(UserParam user, HttpServletResponse servletResponse) throws Exception {
         Cookie cookie = new Cookie(Constants.TOKEN_KEY, "null");
         cookie.setMaxAge(0);
-        //TODO 调试使用
-        cookie.setDomain("127.0.0.1");
         cookie.setPath("/");
         servletResponse.addCookie(cookie);
         return Response.build(ErrorCodeEnum.SUCCESS);
@@ -128,6 +127,9 @@ public class UserServiceImpl implements UserService {
         }
         UserRecord userRecord = userRecordMapper.selectByPrimaryKey(userCode);
         UserInfoVO user = new UserInfoVO(userRecord);
+        if (StringUtils.isEmpty(user.getAvatarUrl())) {
+            user.setAvatarUrl("default_avatar.png");
+        }
         user.setAvatarUrl(config.getImgPrefix() + user.getAvatarUrl());
         return Response.build(ErrorCodeEnum.SUCCESS, user);
     }
