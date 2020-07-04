@@ -172,14 +172,18 @@ public class BookmarkServiceImpl implements BookmarkService {
         categoryCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
         List<CategoryRecord> categoryRecords = categoryMapper.selectByExample(categoryExample);
         Map<Integer, String> categoryNameMap = new HashMap<>(categoryRecords.size());
-        categoryRecords.forEach(c -> {
-            categoryNameMap.put(c.getId(), c.getTitle());
-        });
+        categoryRecords.forEach(c -> categoryNameMap.put(c.getId(), c.getTitle()));
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
         List<BookmarkVO> data = new ArrayList<>();
         for (BookmarkRecord bookmarkRecord : bookmarkRecords) {
             BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
-            bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
+            String iconUrl;
+            if (StringUtils.isEmpty(bookmark.getIconUrl())) {
+                iconUrl = config.getImgPrefix() + Constants.DEFAULT_ICON_NAME;
+            } else {
+                iconUrl = config.getImgPrefix() + bookmark.getIconUrl();
+            }
+            bookmark.setIconUrl(iconUrl);
             bookmark.setCategoryName(categoryNameMap.get(bookmarkRecord.getCategoryId()));
             String tags = bookmarkRecord.getTags();
             if (!StringUtils.isEmpty(tags)) {

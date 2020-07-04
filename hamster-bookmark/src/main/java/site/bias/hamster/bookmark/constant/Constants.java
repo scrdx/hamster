@@ -12,6 +12,8 @@ public class Constants {
 
     public static final String IMAGE_FORMAT = "jpeg";
 
+    public static final String DEFAULT_ICON_NAME = "default_show_icon.jpg";
+
     public static final String TOKEN_KEY = "token";
 
     /**
