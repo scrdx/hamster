@@ -21,17 +21,17 @@ public class BookmarkController {
     private BookmarkService bookmarkService;
 
     @PostMapping("add")
-    public Response add(@RequestBody BookmarkParam bookmark) throws Exception{
+    public Response add(@RequestBody BookmarkParam bookmark) throws Exception {
         return bookmarkService.add(bookmark);
     }
 
     @DeleteMapping("delete")
-    public Response delete(@RequestParam Integer id) throws Exception{
+    public Response delete(@RequestParam Integer id) throws Exception {
         return bookmarkService.delete(id);
     }
 
     @PostMapping("update")
-    public Response update(@RequestBody BookmarkParam bookmarkParam) throws Exception{
+    public Response update(@RequestBody BookmarkParam bookmarkParam) throws Exception {
         return bookmarkService.update(bookmarkParam);
     }
 
@@ -39,19 +39,24 @@ public class BookmarkController {
     public Response query(@RequestParam(value = "key", required = false) String key,
                           @RequestParam(value = "categoryId", required = false) Integer categoryId,
                           @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                          @RequestParam(value = "pageSize", required = false) Integer pageSize) throws Exception{
+                          @RequestParam(value = "pageSize", required = false) Integer pageSize) throws Exception {
 
         return bookmarkService.query(key, categoryId, pageNum, pageSize);
     }
 
     @GetMapping("queryById")
-    public Response queryById(@RequestParam(value = "id") Integer id) throws Exception{
+    public Response queryById(@RequestParam(value = "id") Integer id) throws Exception {
         return bookmarkService.queryById(id);
     }
 
     @GetMapping("queryByTagId")
-    public Response queryByTagId(@RequestParam(value = "tagId") Integer tagId) throws Exception{
+    public Response queryByTagId(@RequestParam(value = "tagId") Integer tagId) throws Exception {
         return bookmarkService.queryByTagId(tagId);
+    }
+
+    @GetMapping("getMetaInfoByUrl")
+    public Response getMetaInfoByUrl(@RequestParam(value = "url") String url) throws Exception {
+        return bookmarkService.getMetaInfoByUrl(url);
     }
 
 }

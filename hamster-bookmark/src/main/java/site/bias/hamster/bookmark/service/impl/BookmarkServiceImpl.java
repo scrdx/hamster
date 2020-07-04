@@ -22,6 +22,8 @@ import site.bias.hamster.bookmark.pojo.*;
 import site.bias.hamster.bookmark.service.BookmarkService;
 import site.bias.hamster.bookmark.util.AvatarUtil;
 import site.bias.hamster.bookmark.util.TokenUtils;
+import site.bias.hamster.meta.HtmlParser;
+import site.bias.hamster.meta.MetaInfo;
 
 import javax.annotation.Resource;
 import java.nio.file.Files;
@@ -229,5 +231,11 @@ public class BookmarkServiceImpl implements BookmarkService {
             data.add(bookmark);
         }
         return Response.build(ErrorCodeEnum.SUCCESS, data);
+    }
+
+    @Override
+    public Response getMetaInfoByUrl(String url) throws Exception {
+        MetaInfo metaInfo = HtmlParser.getMetaInfoByUrl(url);
+        return Response.build(ErrorCodeEnum.SUCCESS, metaInfo);
     }
 }
