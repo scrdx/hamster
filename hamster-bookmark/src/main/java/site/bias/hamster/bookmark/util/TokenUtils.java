@@ -94,7 +94,7 @@ public class TokenUtils {
         for (Cookie cookie : cookies) {
             if (Constants.TOKEN_KEY.equals(cookie.getName())) {
                 token = cookie.getValue();
-                break;
+//                break;
             }
         }
         return getUserCode(token);
