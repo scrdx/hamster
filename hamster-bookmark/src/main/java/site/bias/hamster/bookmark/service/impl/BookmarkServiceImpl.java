@@ -146,14 +146,14 @@ public class BookmarkServiceImpl implements BookmarkService {
             bookmarkCriteria.andTitleLike("%" + key + "%");
         }
         if (null != categoryId) {
-            bookmarkCriteria.andParentsLike("%" + categoryId + "%");
+            bookmarkCriteria.andParentsLike("%/" + categoryId + "%/");
         }
         bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
         //标签条件
         if (!StringUtils.isEmpty(key)) {
             TagRecordExample tagExample = new TagRecordExample();
             TagRecordExample.Criteria tagCriteria = tagExample.createCriteria();
-            tagCriteria.andNameLike("%/" + key + "/%");
+            tagCriteria.andNameLike("%" + key + "%");
             tagCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
             List<TagRecord> tagRecords = tagMapper.selectByExample(tagExample);
             for (TagRecord tagRecord : tagRecords) {
