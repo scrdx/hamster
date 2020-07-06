@@ -153,7 +153,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (!StringUtils.isEmpty(key)) {
             TagRecordExample tagExample = new TagRecordExample();
             TagRecordExample.Criteria tagCriteria = tagExample.createCriteria();
-            tagCriteria.andNameLike("%" + key + "%");
+            tagCriteria.andNameLike("%/" + key + "/%");
             tagCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
             List<TagRecord> tagRecords = tagMapper.selectByExample(tagExample);
             for (TagRecord tagRecord : tagRecords) {
