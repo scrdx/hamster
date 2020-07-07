@@ -158,9 +158,19 @@ public class BookmarkServiceImpl implements BookmarkService {
             List<TagRecord> tagRecords = tagMapper.selectByExample(tagExample);
             for (TagRecord tagRecord : tagRecords) {
                 BookmarkRecordExample.Criteria orCriteria = bookmarkExample.or();
-                orCriteria.andTagsLike("%" + tagRecord.getId() + "%");
+                orCriteria.andTagsLike("%," + tagRecord.getId() + ",%");
                 orCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
-                orCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+
+                //特殊情况处理，当查询的tagId在开头\结尾\只有一个tag的情况
+                BookmarkRecordExample.Criteria begin = bookmarkExample.or();
+                begin.andTagsLike(tagRecord.getId() + ",%");
+                begin.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+                BookmarkRecordExample.Criteria end = bookmarkExample.or();
+                end.andTagsLike("%," + tagRecord.getId());
+                end.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+                BookmarkRecordExample.Criteria onlyOne = bookmarkExample.or();
+                onlyOne.andTagsLike(tagRecord.getId() + "");
+                onlyOne.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
             }
         }
 
@@ -175,6 +185,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         List<CategoryRecord> categoryRecords = categoryMapper.selectByExample(categoryExample);
         Map<Integer, String> categoryNameMap = new HashMap<>(categoryRecords.size());
         categoryRecords.forEach(c -> categoryNameMap.put(c.getId(), c.getTitle()));
+
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
         List<BookmarkVO> data = new ArrayList<>();
         for (BookmarkRecord bookmarkRecord : bookmarkRecords) {
