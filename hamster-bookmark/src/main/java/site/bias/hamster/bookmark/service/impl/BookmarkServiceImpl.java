@@ -142,12 +142,16 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Response query(String key, Integer categoryId, Integer pageNum, Integer pageSize) throws Exception {
         BookmarkRecordExample bookmarkExample = new BookmarkRecordExample();
         BookmarkRecordExample.Criteria bookmarkCriteria = bookmarkExample.createCriteria();
+        BookmarkRecordExample.Criteria prefixCriteria = bookmarkExample.or();
         if (!StringUtils.isEmpty(key)) {
             bookmarkCriteria.andTitleLike("%" + key + "%");
+            prefixCriteria.andTitleLike("%" + key + "%");
         }
         if (null != categoryId) {
-            bookmarkCriteria.andParentsLike("%/" + categoryId + "%/");
+            bookmarkCriteria.andParentsLike("%/" + categoryId + "/%");
+            prefixCriteria.andParentsLike(categoryId + "/%");
         }
+
         bookmarkCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
         //标签条件
         if (!StringUtils.isEmpty(key)) {
