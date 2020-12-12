@@ -575,6 +575,126 @@ public class BookmarkRecordExample {
             return (Criteria) this;
         }
 
+        public Criteria andIsFixedIsNull() {
+            addCriterion("is_fixed is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedIsNotNull() {
+            addCriterion("is_fixed is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedEqualTo(Integer value) {
+            addCriterion("is_fixed =", value, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedNotEqualTo(Integer value) {
+            addCriterion("is_fixed <>", value, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedGreaterThan(Integer value) {
+            addCriterion("is_fixed >", value, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_fixed >=", value, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedLessThan(Integer value) {
+            addCriterion("is_fixed <", value, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedLessThanOrEqualTo(Integer value) {
+            addCriterion("is_fixed <=", value, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedIn(List<Integer> values) {
+            addCriterion("is_fixed in", values, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedNotIn(List<Integer> values) {
+            addCriterion("is_fixed not in", values, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedBetween(Integer value1, Integer value2) {
+            addCriterion("is_fixed between", value1, value2, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFixedNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_fixed not between", value1, value2, "isFixed");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsIsNull() {
+            addCriterion("visits is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsIsNotNull() {
+            addCriterion("visits is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsEqualTo(Long value) {
+            addCriterion("visits =", value, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsNotEqualTo(Long value) {
+            addCriterion("visits <>", value, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsGreaterThan(Long value) {
+            addCriterion("visits >", value, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsGreaterThanOrEqualTo(Long value) {
+            addCriterion("visits >=", value, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsLessThan(Long value) {
+            addCriterion("visits <", value, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsLessThanOrEqualTo(Long value) {
+            addCriterion("visits <=", value, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsIn(List<Long> values) {
+            addCriterion("visits in", values, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsNotIn(List<Long> values) {
+            addCriterion("visits not in", values, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsBetween(Long value1, Long value2) {
+            addCriterion("visits between", value1, value2, "visits");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitsNotBetween(Long value1, Long value2) {
+            addCriterion("visits not between", value1, value2, "visits");
+            return (Criteria) this;
+        }
+
         public Criteria andUserCodeIsNull() {
             addCriterion("user_code is null");
             return (Criteria) this;

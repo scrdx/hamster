@@ -74,4 +74,45 @@ public interface BookmarkService {
      * @throws Exception 全局异常
      */
     Response getMetaInfoByUrl(String url) throws Exception;
+
+    /**
+     * 获取随机书签列表
+     * @param size 数量
+     * @return 随机书签列表
+     * @throws Exception -
+     */
+    Response getRandom(Integer size) throws Exception;
+
+    /**
+     * 获取常用书签列表
+     * 包含两部分: 固定部分 访问次数多的部分
+     * @param size 数量
+     * @return 常用书签列表
+     * @throws Exception -
+     */
+    Response getOften(Integer size) throws Exception;
+
+    /**
+     * 将书签固定
+     * @param id 书签ID
+     * @return 固定结果
+     * @throws Exception -
+     */
+    Response fix(Integer id) throws Exception;
+
+    /**
+     * 取消固定
+     * @param id 书签ID
+     * @return -
+     * @throws Exception -
+     */
+    Response unfix(Integer id) throws Exception;
+
+    /**
+     * 访问次数+1
+     * @param id 书签ID
+     * @return -
+     * @throws Exception -
+     */
+    Response increase(Integer id) throws Exception;
 }

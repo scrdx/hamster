@@ -17,6 +17,10 @@ public class BookmarkRecord {
 
     private String parents;
 
+    private Integer isFixed;
+
+    private Long visits;
+
     private String userCode;
 
     private String tags;
@@ -81,6 +85,22 @@ public class BookmarkRecord {
 
     public void setParents(String parents) {
         this.parents = parents;
+    }
+
+    public Integer getIsFixed() {
+        return isFixed;
+    }
+
+    public void setIsFixed(Integer isFixed) {
+        this.isFixed = isFixed;
+    }
+
+    public Long getVisits() {
+        return visits;
+    }
+
+    public void setVisits(Long visits) {
+        this.visits = visits;
     }
 
     public String getUserCode() {

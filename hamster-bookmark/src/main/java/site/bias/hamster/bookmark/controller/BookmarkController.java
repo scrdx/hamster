@@ -59,4 +59,29 @@ public class BookmarkController {
         return bookmarkService.getMetaInfoByUrl(url);
     }
 
+    @GetMapping("getOften")
+    public Response getOften(@RequestParam(value = "size") Integer size) throws Exception {
+        return bookmarkService.getOften(size);
+    }
+
+    @GetMapping("getRandom")
+    public Response getRandom(@RequestParam(value = "size") Integer size) throws Exception {
+        return bookmarkService.getRandom(size);
+    }
+
+    @PutMapping("fix")
+    public Response fix(@RequestParam(value = "id") Integer id) throws Exception {
+        return bookmarkService.fix(id);
+    }
+
+    @PutMapping("unfix")
+    public Response unfix(@RequestParam(value = "id") Integer id) throws Exception {
+        return bookmarkService.unfix(id);
+    }
+
+    @PostMapping("increase")
+    public Response increase(@RequestParam(value = "id") Integer id) throws Exception {
+        return bookmarkService.increase(id);
+    }
+
 }

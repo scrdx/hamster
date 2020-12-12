@@ -28,4 +28,6 @@ public interface BookmarkRecordMapper {
     int updateByPrimaryKeySelective(BookmarkRecord record);
 
     int updateByPrimaryKey(BookmarkRecord record);
+
+    List<Integer> selectIds(@Param("userCode") String userCode);
 }

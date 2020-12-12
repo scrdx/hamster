@@ -11,6 +11,7 @@ import site.bias.hamster.bookmark.bean.param.BookmarkParam;
 import site.bias.hamster.bookmark.bean.param.CropParam;
 import site.bias.hamster.bookmark.bean.vo.BookmarkVO;
 import site.bias.hamster.bookmark.config.HamsterConfig;
+import site.bias.hamster.bookmark.constant.BookmarkFixStatus;
 import site.bias.hamster.bookmark.constant.BookmarkStatus;
 import site.bias.hamster.bookmark.constant.ErrorCodeEnum;
 import site.bias.hamster.bookmark.constant.Constants;
@@ -29,6 +30,7 @@ import javax.annotation.Resource;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author chenbinbin
@@ -194,13 +196,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         List<BookmarkVO> data = new ArrayList<>();
         for (BookmarkRecord bookmarkRecord : bookmarkRecords) {
             BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
-            String iconUrl;
-            if (StringUtils.isEmpty(bookmark.getIconUrl())) {
-                iconUrl = config.getImgPrefix() + Constants.DEFAULT_ICON_NAME;
-            } else {
-                iconUrl = config.getImgPrefix() + bookmark.getIconUrl();
-            }
-            bookmark.setIconUrl(iconUrl);
+            setIconUrl(bookmark);
             bookmark.setCategoryName(categoryNameMap.get(bookmarkRecord.getCategoryId()));
             String tags = bookmarkRecord.getTags();
             if (!StringUtils.isEmpty(tags)) {
@@ -224,7 +220,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (!StringUtils.isEmpty(tags)) {
             bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
         }
-        bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
+        setIconUrl(bookmark);
         return Response.build(ErrorCodeEnum.SUCCESS, bookmark);
     }
 
@@ -242,7 +238,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             if (!StringUtils.isEmpty(tags)) {
                 bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
             }
-            bookmark.setIconUrl(config.getImgPrefix() + bookmark.getIconUrl());
+            setIconUrl(bookmark);
             data.add(bookmark);
         }
         return Response.build(ErrorCodeEnum.SUCCESS, data);
@@ -252,5 +248,100 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Response getMetaInfoByUrl(String url) throws Exception {
         MetaInfo metaInfo = HtmlParser.getMetaInfoByUrl(url);
         return Response.build(ErrorCodeEnum.SUCCESS, metaInfo);
+    }
+
+
+    @Override
+    public Response getOften(Integer size) throws Exception {
+        BookmarkRecordExample example = new BookmarkRecordExample();
+        BookmarkRecordExample.Criteria criteria = example.createCriteria();
+        criteria.andIsFixedEqualTo(BookmarkFixStatus.FIXED);
+        criteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+        List<BookmarkRecord> fixedBookmarkList = bookmarkMapper.selectByExample(example);
+        setIconUrl(fixedBookmarkList);
+        if (fixedBookmarkList.size() >= size) {
+            return Response.build(ErrorCodeEnum.SUCCESS, fixedBookmarkList.subList(0, size));
+        }
+        //剩余数量的书签根据访问次数排序获取
+        int requireNum = size - fixedBookmarkList.size();
+        example.clear();
+        BookmarkRecordExample.Criteria visitsCriteria = example.createCriteria();
+        visitsCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+        visitsCriteria.andIdNotIn(fixedBookmarkList.stream().map(BookmarkRecord::getId).collect(Collectors.toList()));
+        example.setOrderByClause("visits desc");
+        PageHelper.startPage(1, requireNum);
+        List<BookmarkRecord> visitsOrderBookmarks = bookmarkMapper.selectByExample(example);
+        setIconUrl(visitsOrderBookmarks);
+        fixedBookmarkList.addAll(visitsOrderBookmarks);
+        return Response.build(ErrorCodeEnum.SUCCESS, fixedBookmarkList);
+    }
+
+    @Override
+    public Response getRandom(Integer size) throws Exception {
+        List<Integer> idList = bookmarkMapper.selectIds(TokenUtils.getCurrentUserCode());
+        BookmarkRecordExample example = new BookmarkRecordExample();
+        BookmarkRecordExample.Criteria criteria = example.createCriteria();
+        Collections.shuffle(idList);
+        criteria.andIdIn(idList.subList(0, size));
+        List<BookmarkRecord> bookmarks = bookmarkMapper.selectByExample(example);
+        setIconUrl(bookmarks);
+        return Response.build(ErrorCodeEnum.SUCCESS, bookmarks);
+    }
+
+    @Override
+    public Response fix(Integer id) throws Exception {
+        BookmarkRecordExample example = new BookmarkRecordExample();
+        BookmarkRecordExample.Criteria criteria = example.createCriteria();
+        criteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+        criteria.andIdEqualTo(id);
+        BookmarkRecord record = new BookmarkRecord();
+        record.setIsFixed(BookmarkFixStatus.FIXED);
+        bookmarkMapper.updateByExampleSelective(record, example);
+        return Response.build(ErrorCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public Response unfix(Integer id) throws Exception {
+        BookmarkRecordExample example = new BookmarkRecordExample();
+        BookmarkRecordExample.Criteria criteria = example.createCriteria();
+        criteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+        criteria.andIdEqualTo(id);
+        BookmarkRecord record = new BookmarkRecord();
+        record.setIsFixed(BookmarkFixStatus.UNFIXED);
+        bookmarkMapper.updateByExampleSelective(record, example);
+        return Response.build(ErrorCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public Response increase(Integer id) throws Exception {
+        BookmarkRecord record = bookmarkMapper.selectByPrimaryKey(id);
+        Long visits = record.getVisits();
+        if (null == visits) {
+            visits = 0L;
+        }
+        record.setVisits(++visits);
+        bookmarkMapper.updateByPrimaryKeySelective(record);
+        return Response.build(ErrorCodeEnum.SUCCESS);
+    }
+
+    private void setIconUrl(List<BookmarkRecord> bookmarks) {
+        bookmarks.forEach((bookmark -> {
+            String iconUrl;
+            if (StringUtils.isEmpty(bookmark.getIconUrl())) {
+                iconUrl = config.getImgPrefix() + Constants.DEFAULT_ICON_NAME;
+            } else {
+                iconUrl = config.getImgPrefix() + bookmark.getIconUrl();
+            }
+            bookmark.setIconUrl(iconUrl);
+        }));
+    }
+    private void setIconUrl(BookmarkVO bookmark) {
+        String iconUrl;
+        if (StringUtils.isEmpty(bookmark.getIconUrl())) {
+            iconUrl = config.getImgPrefix() + Constants.DEFAULT_ICON_NAME;
+        } else {
+            iconUrl = config.getImgPrefix() + bookmark.getIconUrl();
+        }
+        bookmark.setIconUrl(iconUrl);
     }
 }
