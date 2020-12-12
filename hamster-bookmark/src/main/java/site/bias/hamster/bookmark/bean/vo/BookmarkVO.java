@@ -32,6 +32,10 @@ public class BookmarkVO {
 
     private Integer status;
 
+    private Integer isFixed;
+
+    private Long visits;
+
     private List<TagVO> tagInfoList;
 
     public BookmarkVO() {
@@ -47,5 +51,7 @@ public class BookmarkVO {
         this.userCode = bookmarkRecord.getUserCode();
         this.created = bookmarkRecord.getCreated();
         this.status = bookmarkRecord.getStatus();
+        this.isFixed = bookmarkRecord.getIsFixed();
+        this.visits = bookmarkRecord.getVisits();
     }
 }
