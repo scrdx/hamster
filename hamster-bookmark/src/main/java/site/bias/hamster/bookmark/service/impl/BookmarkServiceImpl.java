@@ -184,26 +184,10 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (null != pageSize) {
             pageObject = PageHelper.startPage(pageNum, pageSize);
         }
-        //获取书签名称数据
-        CategoryRecordExample categoryExample = new CategoryRecordExample();
-        CategoryRecordExample.Criteria categoryCriteria = categoryExample.createCriteria();
-        categoryCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
-        List<CategoryRecord> categoryRecords = categoryMapper.selectByExample(categoryExample);
-        Map<Integer, String> categoryNameMap = new HashMap<>(categoryRecords.size());
-        categoryRecords.forEach(c -> categoryNameMap.put(c.getId(), c.getTitle()));
 
         List<BookmarkRecord> bookmarkRecords = bookmarkMapper.selectByExample(bookmarkExample);
-        List<BookmarkVO> data = new ArrayList<>();
-        for (BookmarkRecord bookmarkRecord : bookmarkRecords) {
-            BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
-            setIconUrl(bookmark);
-            bookmark.setCategoryName(categoryNameMap.get(bookmarkRecord.getCategoryId()));
-            String tags = bookmarkRecord.getTags();
-            if (!StringUtils.isEmpty(tags)) {
-                bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
-            }
-            data.add(bookmark);
-        }
+        setIconUrl(bookmarkRecords);
+        List<BookmarkVO> data = convertToBookmarkVOList(bookmarkRecords);
 
         if (null != pageSize) {
             return Response.build(ErrorCodeEnum.SUCCESS, data,
@@ -273,7 +257,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         List<BookmarkRecord> visitsOrderBookmarks = bookmarkMapper.selectByExample(example);
         setIconUrl(visitsOrderBookmarks);
         fixedBookmarkList.addAll(visitsOrderBookmarks);
-        return Response.build(ErrorCodeEnum.SUCCESS, fixedBookmarkList);
+        return Response.build(ErrorCodeEnum.SUCCESS, convertToBookmarkVOList(fixedBookmarkList));
     }
 
     @Override
@@ -285,7 +269,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         criteria.andIdIn(idList.subList(0, size));
         List<BookmarkRecord> bookmarks = bookmarkMapper.selectByExample(example);
         setIconUrl(bookmarks);
-        return Response.build(ErrorCodeEnum.SUCCESS, bookmarks);
+        return Response.build(ErrorCodeEnum.SUCCESS, convertToBookmarkVOList(bookmarks));
     }
 
     @Override
@@ -343,5 +327,27 @@ public class BookmarkServiceImpl implements BookmarkService {
             iconUrl = config.getImgPrefix() + bookmark.getIconUrl();
         }
         bookmark.setIconUrl(iconUrl);
+    }
+
+    private List<BookmarkVO> convertToBookmarkVOList(List<BookmarkRecord> list) {
+        //获取书签名称数据
+        CategoryRecordExample categoryExample = new CategoryRecordExample();
+        CategoryRecordExample.Criteria categoryCriteria = categoryExample.createCriteria();
+        categoryCriteria.andUserCodeEqualTo(TokenUtils.getCurrentUserCode());
+        List<CategoryRecord> categoryRecords = categoryMapper.selectByExample(categoryExample);
+        Map<Integer, String> categoryNameMap = new HashMap<>(categoryRecords.size());
+        categoryRecords.forEach(c -> categoryNameMap.put(c.getId(), c.getTitle()));
+
+        List<BookmarkVO> data = new ArrayList<>();
+        for (BookmarkRecord bookmarkRecord : list) {
+            BookmarkVO bookmark = new BookmarkVO(bookmarkRecord);
+            bookmark.setCategoryName(categoryNameMap.get(bookmarkRecord.getCategoryId()));
+            String tags = bookmarkRecord.getTags();
+            if (!StringUtils.isEmpty(tags)) {
+                bookmark.setTagInfoList(tagDAO.getTagInfos(tags, TokenUtils.getCurrentUserCode()));
+            }
+            data.add(bookmark);
+        }
+        return data;
     }
 }
