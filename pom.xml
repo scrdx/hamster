@@ -60,12 +60,7 @@
     </dependencyManagement>
 
     <modules>
-        <module>hamster-animation</module>
-        <module>hamster-book</module>
-        <module>hamster-bookmark</module>
-        <module>hamster-comic</module>
-        <module>hamster-film</module>
-        <module>hamster-game</module>
+        <module>hamster-web</module>
         <module>hamster-common</module>
     </modules>
 
