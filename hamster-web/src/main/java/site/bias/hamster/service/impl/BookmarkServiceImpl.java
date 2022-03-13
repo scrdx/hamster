@@ -68,7 +68,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (!StringUtils.isEmpty(parents)) {
             bookmarkRecord.setParents(parents + bookmark.getCategoryId() + Constants.CATEGORY_SPLIT_CHARACTER);
         } else {
-            bookmarkRecord.setParents(bookmark.getCategoryId() + "/");
+            bookmarkRecord.setParents(bookmark.getCategoryId() + Constants.CATEGORY_SPLIT_CHARACTER);
         }
 
         bookmarkRecord.setCreated(new Date());

@@ -1,7 +1,6 @@
 package site.bias.hamster.meta;
 
 import lombok.Data;
-import site.bias.hamster.meta.icon.Icon;
 
 /**
  * @author Nari
