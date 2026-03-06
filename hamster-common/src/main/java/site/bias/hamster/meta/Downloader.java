@@ -11,6 +11,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Downloader {
 
@@ -22,8 +26,13 @@ public class Downloader {
             @Cleanup ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             HttpGet target = new HttpGet(urlStr);
-            target.setHeader(HttpHeaders.USER_AGENT, "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            target.setHeader(HttpHeaders.CONNECTION, "close");
+            target.setHeader(HttpHeaders.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            target.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+            target.setHeader(HttpHeaders.ACCEPT_LANGUAGE, "zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,ja;q=0.6");
+            target.setHeader(HttpHeaders.CACHE_CONTROL, "max-age=0");
+            target.setHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+            target.setHeader(HttpHeaders.REFERER, "https://www.douban.com/");
+
 
             HttpResponse response = client.execute(target);
             if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
@@ -53,8 +62,13 @@ public class Downloader {
 
     @SneakyThrows
     public static void main(String[] args) {
-        download("https://cdn.aixifan.com/ico/favicon.ico", "D:\\acfun.ico");
-
-
+        List<String> urls = Files.readAllLines(Paths.get("C:\\Users\\nari\\Downloads\\douban\\url.txt"));
+        int index = 1;
+        for (String url : urls) {
+            String fileName = url.substring(url.lastIndexOf("/") + 1);
+            download(url, "C:\\Users\\nari\\Downloads\\douban\\" + fileName);
+            System.out.println(index++);
+            TimeUnit.MILLISECONDS.sleep(500);
+        }
     }
 }

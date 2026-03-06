@@ -62,6 +62,7 @@
     <modules>
         <module>hamster-web</module>
         <module>hamster-common</module>
+        <module>hamster-spider</module>
     </modules>
 
     <build>
